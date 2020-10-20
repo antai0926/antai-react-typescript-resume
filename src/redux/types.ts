@@ -1,4 +1,5 @@
 export const FETCH_WEATHER = 'FETCH_WEATHER';
+export const SET_CITY = 'SET_CITY';
 
 export interface CurrentWeather {
   observationTime: Date;
@@ -15,7 +16,7 @@ export interface Hours36Weather {
   comfortability: string;
 }
 
-export type WeatherData = (CurrentWeather & Hours36Weather) | {};
+export type WeatherData = CurrentWeather & Hours36Weather;
 
 export interface City {
   currentUsed: string;
@@ -27,4 +28,9 @@ interface FetchWeatherAction {
   payload: WeatherData;
 }
 
-export type WeatherAction = FetchWeatherAction;
+interface SetCityAction {
+  type: typeof SET_CITY;
+  payload: City;
+}
+
+export type WeatherAction = FetchWeatherAction | SetCityAction;

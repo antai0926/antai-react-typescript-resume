@@ -6,16 +6,25 @@ import {
   FETCH_WEATHER,
   CurrentWeather,
   Hours36Weather,
+  SET_CITY,
 } from '../types';
 import { getFetchCurrentUrl, getFetch36hoursUrl } from '../../util/weatherUtil';
 
-const fetchCurrentWeatherAsync = async (city: City) => {
+const fetchCurrentWeatherAsync = async (
+  city: City
+): Promise<CurrentWeather> => {
   const res = await fetch(getFetchCurrentUrl(city));
   const data = await res.json();
   const locationData = data.records.location[0];
   if (!locationData) {
     alert('喔不~現在所選縣市之觀測站目前無資訊!(CurrentWeather)');
-    return;
+    return {
+      observationTime: new Date(),
+      locationName: '',
+      temperature: 0,
+      windSpeed: 0,
+      humid: 0,
+    };
   }
   const weatherElements = locationData.weatherElement.reduce(
     (neededElements: any, item: any) => {
@@ -26,7 +35,7 @@ const fetchCurrentWeatherAsync = async (city: City) => {
     },
     {}
   );
-  const weatherData: CurrentWeather = {
+  const weatherData = {
     observationTime: locationData.time.obsTime,
     locationName: locationData.parameter[0].parameterValue,
     temperature: weatherElements.TEMP,
@@ -36,13 +45,18 @@ const fetchCurrentWeatherAsync = async (city: City) => {
   return weatherData;
 };
 
-const fetch36HoursWeather = async (city: City) => {
+const fetch36HoursWeather = async (city: City): Promise<Hours36Weather> => {
   const res = await fetch(getFetch36hoursUrl(city));
   const data = await res.json();
   const locationData = data.records.location[0];
   if (!locationData) {
     alert('喔不~現在所選縣市之觀測站目前無資訊!(36Hours)');
-    return;
+    return {
+      description: '',
+      weatherCode: 0,
+      rainPossibility: 0,
+      comfortability: '',
+    };
   }
   const weatherElements = locationData.weatherElement.reduce(
     (neededElements: any, item: any) => {
@@ -53,7 +67,7 @@ const fetch36HoursWeather = async (city: City) => {
     },
     {}
   );
-  const weatherData: Hours36Weather = {
+  const weatherData = {
     description: weatherElements.Wx.parameterName,
     weatherCode: weatherElements.Wx.parameterValue,
     rainPossibility: weatherElements.PoP.parameterName,
@@ -62,7 +76,7 @@ const fetch36HoursWeather = async (city: City) => {
   return weatherData;
 };
 
-export const getWeather = (
+export const fetchWeather = (
   city: City
 ): ThunkAction<void, RootState, null, WeatherAction> => {
   return async (dispatch) => {
@@ -73,6 +87,17 @@ export const getWeather = (
     dispatch({
       type: FETCH_WEATHER,
       payload: { ...currentData, ...Hours36Data },
+    });
+  };
+};
+
+export const setCity = (
+  city: City
+): ThunkAction<void, RootState, null, WeatherAction> => {
+  return (dispatch) => {
+    dispatch({
+      type: SET_CITY,
+      payload: city,
     });
   };
 };
