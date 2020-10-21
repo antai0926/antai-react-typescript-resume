@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import './WeatherCard.scss';
 import WeatherIcon from '../weather-icon/weather-icon.component';
 import { ReactComponent as AirFlowIcon } from '../../assets/images/airFlow.svg';
@@ -7,7 +7,7 @@ import { ReactComponent as RefreshIcon } from '../../assets/images/refresh.svg';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchWeather } from '../../redux/actions/weatherAction';
 import { RootState } from '../../redux/store';
-const WeatherCard = () => {
+const WeatherCard: FC = () => {
   const { weatherData, city } = useSelector(
     (state: RootState) => state.weather
   );

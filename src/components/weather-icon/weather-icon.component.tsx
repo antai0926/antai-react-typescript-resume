@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, FC } from 'react';
 import './weather-icon.styles.scss';
 import { useSelector } from 'react-redux';
 import { weatherTypes } from '../../util/weather-icon.data';
@@ -17,9 +17,10 @@ import { ReactComponent as NightCloudy } from '../../assets/images/night-cloudy.
 import { ReactComponent as NightFog } from '../../assets/images/night-fog.svg';
 import { ReactComponent as NightPartiallyClearWithRain } from '../../assets/images/night-partially-clear-with-rain.svg';
 import { ReactComponent as NightSnowing } from '../../assets/images/night-snowing.svg';
+import { RootState } from '../../redux/store';
 
-const WeatherIcon = () => {
-  const weatherIcons = {
+const WeatherIcon: FC = () => {
+  const weatherIcons: { [index: string]: any } = {
     day: {
       isThunderstorm: <DayThunderstorm />,
       isClear: <DayClear />,
@@ -40,26 +41,30 @@ const WeatherIcon = () => {
     },
   };
 
-  const { weatherCode } = useSelector((state) => state.weather.weatherData);
+  const { weatherCode } = useSelector(
+    (state: RootState) => state.weather.weatherData
+  );
 
   const [currentWeatherIcon, setCurrentWeatherIcon] = useState('isClear');
 
   useEffect(() => {
-    const weatherCode2Type = (weatherCode) => {
-      const [weatherType] =
-        Object.entries(weatherTypes).find(([weatherType, weatherCodes]) =>
-          weatherCodes.includes(Number(weatherCode))
-        ) || [];
+    const weatherCode2Type = (weatherCode: number): string => {
+      const [weatherType] = Object.entries(
+        weatherTypes
+      ).find(([weatherType, weatherCodes]) =>
+        weatherCodes.includes(Number(weatherCode))
+      ) || ['undefined'];
 
       return weatherType;
     };
-    const currentWeatherIcon = weatherCode2Type(weatherCode);
+    const currentWeatherIcon: string = weatherCode2Type(weatherCode);
     setCurrentWeatherIcon(currentWeatherIcon);
   }, [weatherCode]);
 
-  let taiwanHour = new Date().getUTCHours + 8;
+  const utcHour = new Date().getUTCHours();
+  let taiwanHour = utcHour + 8;
   taiwanHour = taiwanHour > 24 ? taiwanHour - 24 : taiwanHour;
-  const moment = taiwanHour >= 18 || taiwanHour < 6 ? 'night' : 'day';
+  const moment: string = taiwanHour >= 18 || taiwanHour < 6 ? 'night' : 'day';
 
   return (
     <div className="weather-icon">

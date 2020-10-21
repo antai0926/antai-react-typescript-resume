@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { FC } from 'react';
 import './NavBar.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCity } from '../../redux/actions/weatherAction';
 import { WeatherData } from '../../redux/types';
 import { RootState } from '../../redux/store';
 
-const NavBar = () => {
+const NavBar: FC = () => {
   interface city {
     name: string;
     fullName: string;
